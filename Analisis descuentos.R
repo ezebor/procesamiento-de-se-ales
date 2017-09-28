@@ -21,16 +21,11 @@ for(i in 1:cantidad.registros){
   ratio.ordenes.con.cupones.sobre.ordenes.sin.cupones[mes.indice] <- total.ordenes.con.cupones[mes.indice] / total.ordenes.sin.cupones[mes.indice]
 }
 
-op <- par(mfrow = c(1,2))
 meses = seq(from = 1, to = cantidad.meses, by = 1)
-hist(total.ordenes.con.cupones, 
-     main="Frecuencia de descuentos", 
-     xlab="Cantidades de cupones aplicados", 
-     ylab="Cantidades de ocurrencias", 
-     col="green",
-     xlim=c(0,25000),
-     las=1, 
-     breaks=5)
+
+################ GRÁFICOS ################
+
+# RATIO 1
 plot(meses, 
      ratio.ordenes.con.cupones.sobre.ordenes.sin.cupones,
      main="Órdenes con cupones vs. Órdenes sin cupones", 
@@ -39,17 +34,25 @@ plot(meses,
      col="red",
      type = 'l')
 
-# Cambio de año
-abline(v = 12, lty = 1, col = 'blue')
-abline(v = 24, lty = 1, col = 'blue')
-abline(v = 36, lty = 1, col = 'blue')
+abline(v = 12, lty = 1, col = 'blue') # Fin 2015
+abline(v = 24, lty = 1, col = 'blue') # Fin 2016
+abline(v = 36, lty = 1, col = 'blue') # Fin 2017
 
-# Fechas especiales
 abline(v = 5, lty = 3) # Hot sale 2015
 abline(v = 11, lty = 3) # Black friday 2015
 abline(v = 17, lty = 3) # Hot sale 2016
 abline(v = 23, lty = 3) # Black friday 2016
 abline(v = 29, lty = 3) # Hot sale 2017
 abline(v = 35, lty = 3) # Black friday 2017
+
+# Histograma de frecuencias de descuentos
+hist(total.ordenes.con.cupones, 
+     main="Frecuencia de descuentos", 
+     xlab="Cantidades de cupones aplicados", 
+     ylab="Cantidades de ocurrencias", 
+     col="green",
+     xlim=c(0,25000),
+     las=1, 
+     breaks=5)
 
 
