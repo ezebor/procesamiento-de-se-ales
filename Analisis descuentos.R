@@ -1,3 +1,4 @@
+# dir = "/home/braian/R/repo/procesamiento-de-se-ales/datos.csv"
 dir = "/Users/ezequiel/Desktop/procesamiento-de-se-ales/datos.csv"
 cantidad.registros = length(readLines(file(dir,open="r")))
 datos <- read.table(file(dir,open="r"), sep=",", header = TRUE)
