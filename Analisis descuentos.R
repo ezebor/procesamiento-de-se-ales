@@ -1,7 +1,7 @@
 ################ CARGA DATOS ################
 
-dir = "/home/braian/R/repo/procesamiento-de-se-ales/datos.csv"
-# dir = "/Users/ezequiel/Desktop/procesamiento-de-se-ales/datos.csv"
+# dir = "/home/braian/R/repo/procesamiento-de-se-ales/datos.csv"
+dir = "/Users/ezequiel/Desktop/procesamiento-de-se-ales/datos.csv"
 csv <- file(dir,open="r")
 cantidad.registros = length(readLines(csv))
 datos <- read.table(file(dir,open="r"), sep=",", header = TRUE)
@@ -15,7 +15,7 @@ total.ordenes.canceladas = rep(0, cantidad.meses)
 total.ordenes.canceladas.con.cupones = rep(0, cantidad.meses)
 ratio.ordenes.con.cupones.sobre.ordenes.sin.cupones = rep(0, cantidad.meses)
 indice.ordernes.con.cupones.sobre.ordenes.totales = rep(0, cantidad.meses)
-indice.ordernes.canceladas.con.cupones.sobre.ordenes.canceladas.totales = repo(0, cantidad.meses)
+indice.ordernes.canceladas.con.cupones.sobre.ordenes.canceladas.totales = rep(0, cantidad.meses)
 
 ################ CÁLCULOS ################
 
