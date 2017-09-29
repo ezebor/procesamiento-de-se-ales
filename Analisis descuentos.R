@@ -1,13 +1,14 @@
 # dir = "/home/braian/R/repo/procesamiento-de-se-ales/datos.csv"
 dir = "/Users/ezequiel/Desktop/procesamiento-de-se-ales/datos.csv"
-cantidad.registros = length(readLines(file(dir,open="r")))
+csv <- file(dir,open="r")
+cantidad.registros = length(readLines(csv))
 datos <- read.table(file(dir,open="r"), sep=",", header = TRUE)
 
 cantidad.meses = 36 # 12 meses de 2015, 12 meses de 2016 y 12 meses de 2017
 total.ordenes.con.cupones = rep(0, cantidad.meses)
 total.ordenes.sin.cupones = rep(0, cantidad.meses)
 ratio.ordenes.con.cupones.sobre.ordenes.sin.cupones = rep(0, cantidad.meses)
-for(i in 1:cantidad.registros){
+for(i in 1:(cantidad.registros-1)){
   mes.indice = datos$Mes[i]
   if (datos$Anio[i] == 2016){
     mes.indice <- mes.indice + 12 
@@ -23,6 +24,8 @@ for(i in 1:cantidad.registros){
 }
 
 meses = seq(from = 1, to = cantidad.meses, by = 1)
+
+close(csv)
 
 ################ GRÁFICOS ################
 
