@@ -43,31 +43,18 @@ for(i in 1:(cantidad.registros-1)){
   
 }
 
-meses = seq(from = 1, to = cantidad.meses, by = 1)
+tmin <- as.Date("2015-01-01")
+tmax <- as.Date("2017-12-31")
+meses <- seq(tmin, tmax, by="month")
 
 close(csv)
 
 ################ GRÁFICOS ################
 
 # RATIO 1
-plot(meses, 
-     ratio.ordenes.con.cupones.sobre.ordenes.sin.cupones,
-     main="Órdenes con cupones vs. Órdenes sin cupones", 
-     xlab="Meses", 
-     ylab="Razón Con cupones / Sin cupones",
-     col="red",
-     type = 'l')
-
-abline(v = 12, lty = 1, col = 'blue') # Fin 2015
-abline(v = 24, lty = 1, col = 'blue') # Fin 2016
-abline(v = 36, lty = 1, col = 'blue') # Fin 2017
-
-abline(v = 5, lty = 3) # Hot sale 2015
-abline(v = 11, lty = 3) # Black friday 2015
-abline(v = 17, lty = 3) # Hot sale 2016
-abline(v = 23, lty = 3) # Black friday 2016
-abline(v = 29, lty = 3) # Hot sale 2017
-abline(v = 35, lty = 3) # Black friday 2017
+plot.index(ratio.ordenes.con.cupones.sobre.ordenes.sin.cupones, 
+           "Órdenes con cupones vs. Órdenes sin cupones",
+           "Razón Con cupones / Sin cupones")
 
 # Histograma de frecuencias de descuentos
 hist(total.ordenes.con.cupones, 
@@ -80,46 +67,44 @@ hist(total.ordenes.con.cupones,
      breaks=5)
 
 # ÍNDICE 1
-
-plot(meses, 
-     indice.ordernes.con.cupones.sobre.ordenes.totales,
-     main="Órdenes con cupones sobre órdenes totales", 
-     xlab="Meses", 
-     ylab="% Con cupones / Totales",
-     col="red",
-     type = 'l')
-
-abline(v = 12, lty = 1, col = 'blue') # Fin 2015
-abline(v = 24, lty = 1, col = 'blue') # Fin 2016
-abline(v = 36, lty = 1, col = 'blue') # Fin 2017
-
-abline(v = 5, lty = 3) # Hot sale 2015
-abline(v = 11, lty = 3) # Black friday 2015
-abline(v = 17, lty = 3) # Hot sale 2016
-abline(v = 23, lty = 3) # Black friday 2016
-abline(v = 29, lty = 3) # Hot sale 2017
-abline(v = 35, lty = 3) # Black friday 2017
+plot.index(indice.ordernes.con.cupones.sobre.ordenes.totales, 
+           "Órdenes con cupones sobre órdenes totales",
+           "% Con cupones / Totales")
 
 # ÍNDICE 2
+plot.index(indice.ordernes.canceladas.con.cupones.sobre.ordenes.canceladas.totales, 
+           "Órdenes canceladas con cupones sobre totales canceladas",
+           "% Con cupones canceladas / canceladas")
 
-plot(meses, 
-     indice.ordernes.canceladas.con.cupones.sobre.ordenes.canceladas.totales,
-     main="Órdenes canceladas con cupones sobre totales canceladas", 
-     xlab="Meses", 
-     ylab="% Con cupones canceladas / canceladas",
-     col="red",
-     type = 'l')
+################ FUNCIONES AUXILIARES ################
 
-abline(v = 12, lty = 1, col = 'blue') # Fin 2015
-abline(v = 24, lty = 1, col = 'blue') # Fin 2016
-abline(v = 36, lty = 1, col = 'blue') # Fin 2017
+plot.index = function(ratio, titulo, y.label){
+  lab <- format(meses,format="%Y-%b")
+  plot(meses, 
+       ratio,
+       main= titulo, 
+       ylab= y.label,
+       col= "red",
+       type = 'l',
+       xaxt="n", 
+       xlab="",
+       las = 2
+  )
+  axis(1, at=meses, labels=FALSE)
+  text(x=meses, y=par()$usr[3]-0.1*(par()$usr[4]-par()$usr[3]),
+       labels=lab, srt=45, adj=0.8, xpd=TRUE)
+  plot.lines()
+}
 
-abline(v = 5, lty = 3) # Hot sale 2015
-abline(v = 11, lty = 3) # Black friday 2015
-abline(v = 17, lty = 3) # Hot sale 2016
-abline(v = 23, lty = 3) # Black friday 2016
-abline(v = 29, lty = 3) # Hot sale 2017
-abline(v = 35, lty = 3) # Black friday 2017
-
-
-
+plot.lines = function(){
+  abline(v = meses[12], lty = 1, col = 'blue') # Fin 2015
+  abline(v = meses[24], lty = 1, col = 'blue') # Fin 2016
+  abline(v = meses[36], lty = 1, col = 'blue') # Fin 2017
+  
+  abline(v = meses[5], lty = 3) # Hot sale 2015
+  abline(v = meses[11], lty = 3) # Black friday 2015
+  abline(v = meses[17], lty = 3) # Hot sale 2016
+  abline(v = meses[23], lty = 3) # Black friday 2016
+  abline(v = meses[29], lty = 3) # Hot sale 2017
+  abline(v = meses[35], lty = 3) # Black friday 2017
+}
