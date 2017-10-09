@@ -16,8 +16,11 @@ total.ordenes.canceladas.con.cupones = rep(0, cantidad.meses)
 ratio.ordenes.con.cupones.sobre.ordenes.sin.cupones = rep(0, cantidad.meses)
 indice.ordernes.con.cupones.sobre.ordenes.totales = rep(0, cantidad.meses)
 indice.ordernes.canceladas.con.cupones.sobre.ordenes.canceladas.totales = rep(0, cantidad.meses)
+
 montos.totales = rep(0, cantidad.meses)
 montos.totales.descontado = rep(0, cantidad.meses)
+
+indice.ordenes.canceladas.sobre.total.generadas = rep(0, cantidad.meses)
 
 ################ CÁLCULOS ################
 
@@ -36,6 +39,9 @@ for(i in 1:(cantidad.registros-1)){
   
   montos.totales[mes.indice] <- montos.totales[mes.indice] + as.numeric(datos$Total[i])
   montos.totales.descontado[mes.indice] <- montos.totales.descontado[mes.indice] + as.numeric(datos$TotalDiscount[i])
+  
+  total.ordenes.generadas[mes.indice] <- total.ordenes.generadas[mes.indice] + datos$TotalGeneradas
+  indice.ordenes.canceladas.sobre.total.generadas[mes.indice] <- total.ordenes.canceladas[mes.indice] / total.ordenes.generadas[mes.indice]
   
   # RATIO 1: razón entre órdenes con cupones y órdenes sin cupones
   ratio.ordenes.con.cupones.sobre.ordenes.sin.cupones[mes.indice] <- total.ordenes.con.cupones[mes.indice] / total.ordenes.sin.cupones[mes.indice]
@@ -57,8 +63,8 @@ close(csv)
 ################ FUNCIONES AUXILIARES ################
 
 plot.index = function(ratio, titulo, y.label){
+  op <- par(mfrow = c(1,1))
   lab <- format(meses,format="%Y-%b")
-  op <- par(mar = c(5,7,4,2) + 0.1)
   plot(meses, 
        ratio,
        main= titulo, 
@@ -75,10 +81,31 @@ plot.index = function(ratio, titulo, y.label){
   plot.lines()
 }
 
-plot.montos.totales = function(titulo, y.label){
-  plot.index(montos.totales, titulo, y.label)
-  lines(meses, montos.totales.descontado, col='green')
+plot.ordenes = function(){
+  plot.index(indice.ordenes.canceladas.sobre.total.generadas, 
+             "% de órdendes canceladas sobre el total de órdenes generadas", "")
+}
+
+plot.totales = function(montos, titulo, y.label){
+  montos.pretty = rep(0, cantidad.meses)
+  for(i in 1:cantidad.meses){
+    montos.pretty[i] = montos[i] / 1000000
+  }
+  plot(meses, 
+       montos.pretty,
+       main= titulo, 
+       ylab= y.label,
+       col= "red",
+       type = 'l',
+       las = 1
+  )
   plot.lines()
+}
+
+plot.montos.totales = function(){
+  op <- par(mfrow = c(1,2))
+  plot.totales(montos.totales, "Montos totales [Millones]", "")
+  plot.totales(montos.totales.descontado, "Montos descontados [Millones]", "")
 }
 
 plot.lines = function(){
@@ -114,12 +141,17 @@ hist(total.ordenes.con.cupones,
 # ÍNDICE 1
 plot.index(indice.ordernes.con.cupones.sobre.ordenes.totales, 
            "Órdenes con cupones sobre órdenes totales",
-           "% Órdenes con cupones sobre órdenes totales")
+           "% de órdenes con cupones sobre órdenes totales")
 
 # ÍNDICE 2
 plot.index(indice.ordernes.canceladas.con.cupones.sobre.ordenes.canceladas.totales, 
-           "Órdenes canceladas con cupones sobre órdenes canceladas",
+           "% de órdenes canceladas con cupones sobre órdenes canceladas",
            "% Órdenes canceladas con cupones sobre órdenes canceladas")
 
 # MONTOS TOTALES VS MONTOS DESCONTADOS
-plot.montos.totales("Montos totales y montos descontdos", "")
+plot.montos.totales()
+
+# ÓRDENES CANCELADAS VS ÓRDENES TOTALES
+
+plot.ordenes()
+
