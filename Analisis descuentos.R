@@ -76,23 +76,9 @@ plot.index = function(ratio, titulo, y.label){
 }
 
 plot.montos.totales = function(titulo, y.label){
-  lab <- format(meses,format="%Y-%b")
-  op <- par(mar = c(5,7,4,2) + 0.1)
-  plot(meses, 
-       montos.totales,
-       main= titulo, 
-       ylab= y.label,
-       col= "red",
-       type = 'l',
-       xaxt="n", 
-       xlab="",
-       las = 2
-  )
-  axis(1, at=meses, labels=FALSE)
-  text(x=meses, y=par()$usr[3]-0.1*(par()$usr[4]-par()$usr[3]),
-       labels=lab, srt=45, adj=0.8, xpd=TRUE)
-  plot.lines()
+  plot.index(montos.totales, titulo, y.label)
   lines(meses, montos.totales.descontado, col='green')
+  plot.lines()
 }
 
 plot.lines = function(){
