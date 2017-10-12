@@ -12,6 +12,7 @@ cantidad.meses = 36 # 12 meses de 2015, 12 meses de 2016 y 12 meses de 2017
 total.ordenes.con.cupones = rep(0, cantidad.meses)
 total.ordenes.sin.cupones = rep(0, cantidad.meses)
 total.ordenes.canceladas = rep(0, cantidad.meses)
+total.ordenes.generadas = rep(0, cantidad.meses)
 total.ordenes.canceladas.con.cupones = rep(0, cantidad.meses)
 ratio.ordenes.con.cupones.sobre.ordenes.sin.cupones = rep(0, cantidad.meses)
 indice.ordernes.con.cupones.sobre.ordenes.totales = rep(0, cantidad.meses)
@@ -52,6 +53,15 @@ for(i in 1:(cantidad.registros-1)){
   # ÍNDICE 2: órdenes canceladas con cupones sobre totales canceladas
   indice.ordernes.canceladas.con.cupones.sobre.ordenes.canceladas.totales[mes.indice] <- 100 * (total.ordenes.canceladas.con.cupones[mes.indice] / total.ordenes.canceladas[mes.indice])
   
+  # Media movil
+  tipoMA = rep(1/9,9)
+  media.ratio1 = filter(ratio.ordenes.con.cupones.sobre.ordenes.sin.cupones, tipoMA, circular = FALSE)
+  media.indice1 = filter(indice.ordernes.con.cupones.sobre.ordenes.totales, tipoMA, circular = FALSE)
+  media.indice2 = filter(indice.ordernes.canceladas.con.cupones.sobre.ordenes.canceladas.totales, tipoMA, circular = FALSE)
+  media.indice3 = filter(indice.ordenes.canceladas.sobre.total.generadas, tipoMA, circular = FALSE)
+  media.totales = filter(montos.totales, tipoMA, circular = FALSE)
+  media.totales.descontados = filter(montos.totales.descontado, tipoMA, circular = FALSE)
+  
 }
 
 tmin <- as.Date("2015-01-01")
@@ -62,7 +72,7 @@ close(csv)
 
 ################ FUNCIONES AUXILIARES ################
 
-plot.index = function(ratio, titulo, y.label){
+plot.index = function(ratio, media, titulo, y.label){
   op <- par(mfrow = c(1,1))
   lab <- format(meses,format="%Y-%b")
   plot(meses, 
@@ -75,6 +85,7 @@ plot.index = function(ratio, titulo, y.label){
        xlab="",
        las = 2
   )
+  lines(meses, media, col= "green")
   axis(1, at=meses, labels=FALSE)
   text(x=meses, y=par()$usr[3]-0.1*(par()$usr[4]-par()$usr[3]),
        labels=lab, srt=45, adj=0.8, xpd=TRUE)
@@ -82,14 +93,16 @@ plot.index = function(ratio, titulo, y.label){
 }
 
 plot.ordenes = function(){
-  plot.index(indice.ordenes.canceladas.sobre.total.generadas, 
+  plot.index(indice.ordenes.canceladas.sobre.total.generadas, media.indice3,
              "% de órdendes canceladas sobre el total de órdenes generadas", "")
 }
 
-plot.totales = function(montos, titulo, y.label){
+plot.totales = function(montos, media, titulo, y.label){
   montos.pretty = rep(0, cantidad.meses)
+  media.pretty = rep(0, cantidad.meses)
   for(i in 1:cantidad.meses){
     montos.pretty[i] = montos[i] / 1000000
+    media.pretty[i] = media[i] / 1000000
   }
   plot(meses, 
        montos.pretty,
@@ -99,13 +112,14 @@ plot.totales = function(montos, titulo, y.label){
        type = 'l',
        las = 1
   )
+  lines(meses, media.pretty, col= "green")
   plot.lines()
 }
 
 plot.montos.totales = function(){
   op <- par(mfrow = c(1,2))
-  plot.totales(montos.totales, "Montos totales [Millones]", "")
-  plot.totales(montos.totales.descontado, "Montos descontados [Millones]", "")
+  plot.totales(montos.totales, media.totales, "Montos totales [Millones]", "")
+  plot.totales(montos.totales.descontado, media.totales.descontados, "Montos descontados [Millones]", "")
 }
 
 plot.lines = function(){
@@ -124,7 +138,7 @@ plot.lines = function(){
 ################ GRÁFICOS ################
 
 # RATIO 1
-plot.index(ratio.ordenes.con.cupones.sobre.ordenes.sin.cupones, 
+plot.index(ratio.ordenes.con.cupones.sobre.ordenes.sin.cupones, media.ratio1,
            "Órdenes con cupones sobre órdenes sin cupones",
            "Razón: órdenes con cupones / órdenes sin cupones")
 
@@ -139,12 +153,12 @@ hist(total.ordenes.con.cupones,
      breaks=5)
 
 # ÍNDICE 1
-plot.index(indice.ordernes.con.cupones.sobre.ordenes.totales, 
+plot.index(indice.ordernes.con.cupones.sobre.ordenes.totales, media.indice1,
            "Órdenes con cupones sobre órdenes totales",
            "% de órdenes con cupones sobre órdenes totales")
 
 # ÍNDICE 2
-plot.index(indice.ordernes.canceladas.con.cupones.sobre.ordenes.canceladas.totales, 
+plot.index(indice.ordernes.canceladas.con.cupones.sobre.ordenes.canceladas.totales, media.indice2,
            "% de órdenes canceladas con cupones sobre órdenes canceladas",
            "% Órdenes canceladas con cupones sobre órdenes canceladas")
 
